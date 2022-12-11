@@ -68,6 +68,8 @@ nlu:
     - asdf@asdf.com
     - [Grey](color)
     - test@test.com
+    - my login is  login_\d{5}(userName)
+    - my password is  password_\d{5}(password)
 - intent: order_shoes
   examples: |
     - i want to buy shoes
@@ -219,3 +221,19 @@ nlu:
   examples: |
     - can you tell me your name?
     - what's your name?
+- intent: login
+  examples: |
+    - login
+    - login into account
+- intent:  logout 
+  examples: |
+    - logout
+    - I want to logout
+    - I want to exit from account
+- intent: current_role
+  examples: |
+    - account status
+    - account role
+    - I want to see my account status
+    - my account
+    - my role

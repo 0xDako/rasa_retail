@@ -9,6 +9,18 @@ rules:
   - intent: chitchat
   - action: utter_chitchat
 
+- rule: logout
+  steps:
+  - intent: logout
+  - action: action_logout
+  - active_loop: null
+
+- rule: current_role
+  steps:
+  - intent: current_role
+  - action: action_current_role
+  - active_loop: null
+
 - rule: out of scope
   steps:
   - or:
@@ -188,3 +200,39 @@ rules:
   - action: survey_form
   - active_loop: null
   - action: action_survey_submit
+
+#login
+
+- rule: Activate form for login
+  steps:
+  - intent: login
+  - action: action_login
+  - active_loop: null
+  - action: utter_login_start
+  - action: login_form
+  - active_loop: login_form
+
+- rule: Submit login form, survey complete
+  condition:
+  - active_loop: login_form
+  - slot_was_set:
+    - survey_complete: True
+  steps:
+  - action: login_form
+  - active_loop: null
+  - action: action_login
+
+- rule: Submit login form, needs survey
+  condition:
+  - active_loop: login_form
+  steps:
+  - action: login_form
+  - active_loop: null
+  - action: action_login
+  - action: survey_form
+  - active_loop: survey_form
+
+
+
+
+

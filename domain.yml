@@ -17,6 +17,9 @@ intents:
 - out_of_scope
 - nlu_fallback
 - whats_your_name
+- login
+- logout
+- current_role
 entities:
 - email
 - color
@@ -81,6 +84,22 @@ slots:
       conditions:
       - active_loop: survey_form
         requested_slot: open_feedback
+  userName:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_text
+      conditions:
+      - active_loop: login_form
+        requested_slot: userName
+  password:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: from_text
+      conditions:
+      - active_loop: login_form
+        requested_slot: password
   requested_slot:
     type: any
     influence_conversation: false
@@ -107,6 +126,8 @@ responses:
       title: Check inventory
     - payload: Subscribe to product updates
       title: Subscribe to product updates
+    - payload: Login into account
+      title: Login into account
     text: Hi there! I'm a demo bot from Rasa to help you with ordering shoes. How can I help you?
   utter_default:
   - text: I don't think I understand. Can you try providing more detail?
@@ -195,6 +216,30 @@ responses:
   - text: Sorry, seems like we don't have those shoes.
   utter_order_shoes:
   - text: Sorry, I can't actually help you order the shoes. Please visit our site to buy some nice shoes! I can help you check inventory, see the status of an order or even make a change to that order.
+  utter_ask_login_form_userName:
+  - text: Please, write your login.
+  utter_ask_login_form_password:
+  - text: Please, write your password.
+  utter_login_finish:
+  - text: You are successfully login!
+  utter_login_not_found:
+  - text: user with this userName and password not found
+  utter_login_error:
+  - text: Sorry, an error occurred during logout
+  utter_account_status_error:
+  - text: Sorry, an error occurred during checking account status
+  utter_account_status_finish:
+  - text: You role is {name}
+  utter_form_login:
+  - text: You login
+  utter_login_start:
+  - text: Write your login and password to have access to actions
+  utter_logout_not_in_account:
+  - text: You are not in account
+  utter_logout_start:
+  - text: Logging out...
+  utter_logout_finish:
+  - text: You are successfully logout
 actions:
 - action_product_search
 - action_survey_submit
@@ -202,6 +247,9 @@ actions:
 - action_cancel_order
 - action_return
 - action_give_name
+- action_login
+- action_logout
+- action_current_role
 forms:
   order_status_form:
     ignored_intents: []
@@ -229,3 +277,8 @@ forms:
     required_slots:
     - rating
     - open_feedback
+  login_form:
+    ignored_intents: []
+    required_slots:
+    - userName
+    - password

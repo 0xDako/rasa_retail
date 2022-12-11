@@ -7,7 +7,7 @@ from rasa_sdk.events import BotUttered
 import sqlite3
 
 # change this to the location of your SQLite file
-path_to_db = "actions/example.db"
+path_to_db = "example.db"
 
 class ActionProductSearch(Action):
     def name(self) -> Text:
@@ -195,3 +195,106 @@ class GiveName(Action):
         )
 
         return [evt]
+
+class Login(Action):
+    def name(self) ->  Text:
+            return "action_login"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        print("login action")
+        slots_to_reset = ["userName", "password"]
+        try:
+                connection = sqlite3.connect(path_to_db)
+                cursor = connection.cursor()
+                userName =  tracker.get_slot("userName")
+                password =  tracker.get_slot("password")
+                print(f"userName: {userName}")
+                print(f"password: {password}")
+
+                cursor.execute("SELECT * FROM users where login=? and password=?", (userName, password))
+                data_row = cursor.fetchone()
+
+                if not data_row:
+                    dispatcher.utter_message(template="utter_login_not_found")
+                    return [SlotSet(slot, None) for slot in slots_to_reset]
+
+                user_id =  list(data_row)[0]
+                print(user_id)
+                cursor.execute("DELETE from currentUser")
+                cursor.execute("INSERT into currentUser values (?)", (int(user_id),))
+                connection.commit()
+                connection.close()
+                dispatcher.utter_message(template="utter_login_finish")
+                return [SlotSet(slot, None) for slot in slots_to_reset]
+
+        except Exception as e:
+                print(str(e))
+                dispatcher.utter_message(template="utter_login_error")
+                return [SlotSet(slot, None) for slot in slots_to_reset]
+
+
+class Logout(Action):
+    def name(self) ->  Text:
+            return "action_logout"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        print("logout action")
+        try:
+                connection = sqlite3.connect(path_to_db)
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT * FROM currentUser")
+                data_row = cursor.fetchone()
+
+                if not data_row:
+                    dispatcher.utter_message(template="utter_logout_not_in_account")
+                    return
+
+                cursor.execute("DELETE from currentUser")
+                connection.commit()
+                connection.close()
+                dispatcher.utter_message(template="utter_logout_finish")
+
+        except Exception as e:
+                print(str(e))
+                dispatcher.utter_message(template="utter_login_error")
+
+class Account_status(Action):
+    def name(self) ->  Text:
+            return "action_current_role"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        print("logout account_status")
+        try:
+                connection = sqlite3.connect(path_to_db)
+                cursor = connection.cursor()
+
+                cursor.execute("SELECT * FROM currentUser join users on users.id = currentUser.user join roles on roles.id = users.role")
+                data_row = cursor.fetchone()
+                print(data_row)
+
+                if not data_row:
+                    dispatcher.utter_message(template="utter_logout_not_in_account")
+                    return
+
+                connection.close()
+                dispatcher.utter_message(template="utter_account_status_finish", name=list(data_row)[6])
+
+        except Exception as e:
+                print(str(e))
+                dispatcher.utter_message(template="utter_account_status_error")

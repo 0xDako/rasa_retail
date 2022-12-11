@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  ducling:
+    image: rasa/duckling
+    ports:
+      - 8000:8000
+
+    networks:
+        - laba
+  actions:
+    build:
+       context: .
+       dockerfile: Dockerfile
+    tty: true    
+    networks:
+        - laba
+    #restart: always
+    
+networks:
+  laba:
+    driver: bridge

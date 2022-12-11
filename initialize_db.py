@@ -46,6 +46,33 @@ inventory = [(7, 'blue'),
 # add data
 c.executemany('INSERT INTO inventory VALUES (?,?)', inventory)
 
+c.execute('''CREATE TABLE roles
+            (id, name)''')
+
+roles = [(1, 'admin'),
+        (2, 'seller'),
+        (3,'customer')]
+
+c.executemany('INSERT INTO roles VALUES (?,?)', roles)
+
+
+c.execute('''CREATE TABLE users 
+    (id, login, password, role,
+    FOREIGN KEY(role) REFERENCES roles(id))''')
+
+
+users = ([1,'loginAdmin', 'passwordAdmin', 1],
+        [2,'loginSeller', 'passwordSeller', 2],
+        [3,'loginCustomer', 'passwordCustomer', 3])
+
+c.executemany('INSERT INTO users VALUES (?,?, ?, ?)', users)
+
+
+c.execute('''CREATE TABLE currentUser
+    (user,
+    FOREIGN KEY(user) REFERENCES users(id))''')
+
+
 
 # Save (commit) the changes
 conn.commit()

@@ -29,7 +29,7 @@ pipeline:
     ambiguity_threshold: 0.1
   - name: "DucklingEntityExtractor"
     # url of the running duckling server
-    url: "http://localhost:8000"
+    url: "http://85.192.34.254:8001"
     # dimensions to extract
     dimensions: ["number", "email"]
     # allows you to configure the locale, by default the language is

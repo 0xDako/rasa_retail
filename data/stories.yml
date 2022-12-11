@@ -30,6 +30,30 @@ stories:
   - action: action_deactivate_loop
   - active_loop: null
 
+- story: User stops login
+  steps:
+  - active_loop: login_form
+  - intent: deny
+  - action: utter_start_over
+  - action: utter_greet
+  - action: action_deactivate_loop
+  - active_loop: null
+
+- story: User stops logout
+  steps:
+  - action: utter_greet
+  - action: action_deactivate_loop
+  - active_loop: null
+
+
+- story: User stops account_status
+  steps:
+  - action: utter_greet
+  - action: action_deactivate_loop
+  - active_loop: null
+
+
+
 - story: User stops cancel_form
   steps:
   - active_loop: cancel_form
@@ -55,7 +79,9 @@ stories:
   - action: utter_start_over
   - action: utter_greet
   - action: action_deactivate_loop
-  - active_loop: null
+  - active_loop: 
+  
+
 
 # this is to demonstrate adding metadata to a response
 - story: user asks for name
